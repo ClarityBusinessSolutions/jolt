@@ -1,0 +1,22 @@
+{
+  "input": {
+    "date": "Wednesday 02/20/2019 00:00:00",
+    "anotherDate": "02/20/2019,00:00",
+    "originalDate": "Wednesday 02/20/2019 00:00:00",
+    "unixTime": "1550696128"
+  },
+  "spec": {
+    "date": "=transformDate(@(1,date), 'EEEE MM/dd/yyyy HH:mm:ss', yyyy-MM-dd'T'HH:mm:ss)",
+    //The Java 8 date formatter allows multiple patterns, each one in brackets, and it chooses the correct match
+    "anotherDate": "=transformDate(@(1,anotherDate), '[EEEE MM/dd/yyyy HH:mm:ss][MM/dd/yyyy,HH:mm]', yyyy-MM-dd'T'HH:mm:ss)",
+    //By using the string "EPOCH", this tells the system to parse this as seconds since epoch (assuming UTC)
+    "unixTime": "=transformDate(@(1,unixTime), 'EPOCH', yyyy-MM-dd'T'HH:mm:ss)"
+  },
+  "context": {},
+  "OVERWRITR": {
+    "date": "2019-02-20T00:00:00",
+    "anotherDate": "2019-02-20T00:00:00",
+    "unixTime": "2019-02-20T20:55:28",
+    "originalDate": "Wednesday 02/20/2019 00:00:00"
+  }
+}

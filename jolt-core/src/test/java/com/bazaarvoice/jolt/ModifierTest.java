@@ -176,6 +176,8 @@ public class ModifierTest {
         testCases.add( new Object[]{"/json/modifier/functions/valueTests.json", TemplatrTestCase.OVERWRITR }  );
         testCases.add( new Object[]{"/json/modifier/functions/squashNullsTests.json", TemplatrTestCase.OVERWRITR }  );
 
+        testCases.add( new Object[]{"/json/modifier/functions/dateFormatterTests.json", TemplatrTestCase.OVERWRITR }  );
+
         return testCases.iterator();
     }
 
