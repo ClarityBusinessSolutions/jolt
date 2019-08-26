@@ -16,66 +16,66 @@
 package com.bazaarvoice.jolt.modifier.function;
 
 import com.bazaarvoice.jolt.common.Optional;
+import com.bazaarvoice.jolt.exception.SpecException;
+import com.bazaarvoice.jolt.utils.StringTools;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 
-@SuppressWarnings("deprecated")
+@SuppressWarnings( "deprecated" )
 public class Strings {
 
     public static final class toLowerCase extends Function.SingleFunction<String> {
         @Override
-        protected Optional<String> applySingle(final Object arg) {
+        protected Optional<String> applySingle( final Object arg ) {
 
-            if (!(arg instanceof String)) {
+            if ( ! (arg instanceof String) ) {
                 return Optional.empty();
             }
 
             String argString = (String) arg;
 
-            return Optional.of(argString.toLowerCase());
+            return Optional.of( argString.toLowerCase() );
         }
     }
 
     public static final class toUpperCase extends Function.SingleFunction<String> {
         @Override
-        protected Optional<String> applySingle(final Object arg) {
+        protected Optional<String> applySingle( final Object arg ) {
 
-            if (!(arg instanceof String)) {
+            if ( ! (arg instanceof String) ) {
                 return Optional.empty();
             }
 
             String argString = (String) arg;
 
-            return Optional.of(argString.toUpperCase());
+            return Optional.of( argString.toUpperCase() );
         }
     }
 
     public static final class trim extends Function.SingleFunction<String> {
         @Override
-        protected Optional<String> applySingle(final Object arg) {
+        protected Optional<String> applySingle( final Object arg ) {
 
-            if (!(arg instanceof String)) {
+            if ( ! (arg instanceof String) ) {
                 return Optional.empty();
             }
 
             String argString = (String) arg;
 
-            return Optional.of(argString.trim());
+            return Optional.of( argString.trim() );
         }
     }
 
     public static final class concat extends Function.ListFunction {
         @Override
-        protected Optional<Object> applyList(final List<Object> argList) {
-            StringBuilder sb = new StringBuilder();
-            for (Object arg : argList) {
-                if (arg != null) {
-                    sb.append(arg.toString());
+        protected Optional<Object> applyList( final List<Object> argList ) {
+            StringBuilder sb = new StringBuilder(  );
+            for(Object arg: argList ) {
+                if ( arg != null ) {
+                    sb.append(arg.toString() );
                 }
             }
             return Optional.of(sb.toString());
@@ -93,13 +93,13 @@ public class Strings {
             do {
 
                 // if argList is null or not the right size; bail
-                if (argList == null || argList.size() != 3) {
+                if(argList == null || argList.size() != 3 ) {
                     break;
                 }
 
-                if (!(argList.get(0) instanceof String &&
-                        argList.get(1) instanceof Integer &&
-                        argList.get(2) instanceof Integer)) {
+                if ( ! ( argList.get(0) instanceof String &&
+                         argList.get(1) instanceof Integer &&
+                         argList.get(2) instanceof Integer ) ) {
                     break;
                 }
 
@@ -109,54 +109,56 @@ public class Strings {
                 int end = (Integer) argList.get(2);
 
                 // do start and end make sense?
-                if (start >= end || start < 0 || end < 1 || end > tuna.length()) {
+                if ( start >= end || start < 0 || end < 1 || end > tuna.length() ) {
                     break;
                 }
 
                 return Optional.of(tuna.substring(start, end));
 
-            } while (false);
+            } while( false );
 
             // if we got here, then return an Optional.empty.
             return Optional.empty();
         }
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings( "unchecked" )
     public static final class join extends Function.ArgDrivenListFunction<String> {
 
         @Override
-        protected Optional<Object> applyList(final String specialArg, final List<Object> args) {
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < args.size(); i++) {
+        protected Optional<Object> applyList( final String specialArg, final List<Object> args ) {
+            StringBuilder sb = new StringBuilder(  );
+            for(int i=0; i < args.size(); i++) {
                 Object arg = args.get(i);
-                if (arg != null) {
+                if (arg != null ) {
                     String argString = arg.toString();
-                    if (!("".equals(argString))) {
-                        sb.append(argString);
-                        if (i < args.size() - 1) {
-                            sb.append(specialArg);
+                    if( !("".equals( argString ))) {
+                        sb.append( argString );
+                        if ( i < args.size() - 1 ) {
+                            sb.append( specialArg );
                         }
                     }
                 }
             }
-            return Optional.of(sb.toString());
+            return Optional.of( sb.toString() );
         }
     }
 
     public static final class split extends Function.ArgDrivenSingleFunction<String, List> {
-        @Override
-        protected Optional<List> applySingle(final String separator, final Object source) {
-            if (source == null || separator == null) {
-                return Optional.empty();
-            } else if (source instanceof String) {
-                // only try to split input strings
-                String inputString = (String) source;
-                return Optional.of(Arrays.asList(inputString.split(separator)));
-            } else {
-                return Optional.empty();
-            }
+      @Override
+      protected Optional<List> applySingle(final String separator, final Object source) {
+        if (source == null || separator == null) {
+          return Optional.empty();
         }
+        else if ( source instanceof String ) {
+          // only try to split input strings
+          String inputString = (String) source;
+          return Optional.of( Arrays.asList(inputString.split(separator)) );
+        }
+        else {
+          return Optional.empty();
+        }
+      }
     }
 
 
@@ -164,7 +166,7 @@ public class Strings {
         @Override
         protected Optional<Object> applyList(String source, List<Object> args) {
 
-            return padString(true, source, args);
+            return padString( true, source, args );
         }
     }
 
@@ -172,30 +174,30 @@ public class Strings {
         @Override
         protected Optional<Object> applyList(String source, List<Object> args) {
 
-            return padString(false, source, args);
+            return padString( false, source, args );
         }
     }
 
-    private static Optional<Object> padString(boolean leftPad, String source, List<Object> args) {
+    private static Optional<Object> padString( boolean leftPad, String source, List<Object> args ) {
 
         // There is only one path that leads to success and many
         //  ways for this to fail.   So using a do/while loop
         //  to make the bailing easy.
         do {
 
-            if (source == null || args == null) {
+            if(source == null || args == null ) {
                 break;
             }
 
-            if (!(args.get(0) instanceof Integer &&
-                    args.get(1) instanceof String)) {
+            if ( ! ( args.get(0) instanceof Integer &&
+                     args.get(1) instanceof String ) ) {
                 break;
             }
 
             Integer width = (Integer) args.get(0);
 
             // if the width param is stupid; bail
-            if (width <= 0 || width > 500) {
+            if ( width <= 0 || width > 500 ) {
                 break;
             }
 
@@ -203,34 +205,35 @@ public class Strings {
 
             // filler can only be a single char
             //  otherwise the math becomes hard
-            if (filler.length() != 1) {
+            if ( filler.length() != 1 ) {
                 break;
             }
 
-            char fillerChar = filler.charAt(0);
+            char fillerChar = filler.charAt( 0 );
 
             // if the desired width of the overall padding is smaller than
             //  the source string, then just return the source string.
-            if (width <= source.length()) {
-                return Optional.of(source);
+            if( width <= source.length() ) {
+                return Optional.of( source );
             }
 
             int padLength = width - source.length();
             char[] padArray = new char[padLength];
 
-            Arrays.fill(padArray, fillerChar);
+            Arrays.fill( padArray, fillerChar );
 
             StringBuilder sb = new StringBuilder();
 
-            if (leftPad) {
-                sb.append(padArray).append(source);
-            } else {
-                sb.append(source).append(padArray);
+            if ( leftPad ) {
+                sb.append( padArray ).append( source );
+            }
+            else {
+                sb.append( source ).append( padArray );
             }
 
-            return Optional.of(sb.toString());
+            return Optional.of( sb.toString() );
 
-        } while (false);
+        } while ( false );
 
         return Optional.empty();
     }
@@ -241,38 +244,62 @@ public class Strings {
 
             if (!(args.get(0) instanceof String &&
                     args.get(1) instanceof String)) {
-                //return Optional.of(originalDate);
-                return Optional.of("foo");
+                //TODO should we warn user that we were unable to parse the input or output pattern?
+                return Optional.of(originalDate);
+                //return Optional.of("foo");
             }
 
             String inputPatterns = (String) args.get(0);
             String outputPattern = (String) args.get(1);
+            String timezone = (String) args.get(2);
 
-            LocalDateTime localDateTime;
+            ZonedDateTime zonedDateTime;
             DateTimeFormatter originalFormatter;
             DateTimeFormatter outputFormatter;
 
+            ZoneId zoneId = ZoneId.systemDefault();
+
+            if (StringTools.isNotBlank(timezone)) {
+
+                String timeZoneString = timeZoneString = ZoneId.SHORT_IDS.get(timezone);
+
+                if (timeZoneString == null) {
+                    throw new SpecException( "Invalid timezone! " +
+                            "Timezone must be abbreviated timezone from ZoneId.SHORT_IDS" );
+                } else if (timeZoneString != null) {
+                    zoneId = ZoneId.of(timeZoneString);
+                }
+            }
+
             try {
-                if (inputPatterns.equalsIgnoreCase("EPOCH")) {
+                if (inputPatterns.equalsIgnoreCase("EPOCH_MILLI")) {
 
                     Long epochTime = Long.parseLong(originalDate);
 
-                    localDateTime = LocalDateTime.ofEpochSecond(epochTime, 0, ZoneOffset.UTC);
+                    //zonedDateTime = LocalDateTime.ofEpochSecond(epochTime, 0, ZoneOffset.UTC);
+                    zonedDateTime = ZonedDateTime.ofInstant(Instant.ofEpochMilli(epochTime), ZoneId.of(timezone));
+
+
+                } else if (inputPatterns.equalsIgnoreCase("EPOCH_SECOND")) {
+
+                    Long epochTime = Long.parseLong(originalDate);
+
+                    //zonedDateTime = LocalDateTime.ofEpochSecond(epochTime, 0, ZoneOffset.UTC);
+                    zonedDateTime = ZonedDateTime.ofInstant(Instant.ofEpochSecond(epochTime), ZoneId.of(timezone));
+
 
                 } else {
-                    originalFormatter = DateTimeFormatter.ofPattern(inputPatterns);
-                    localDateTime = LocalDateTime.parse(originalDate, originalFormatter);
+                    originalFormatter = DateTimeFormatter.ofPattern(inputPatterns).withZone(zoneId);
+                    zonedDateTime = ZonedDateTime.parse(originalDate, originalFormatter);
                 }
-
-
 
                 outputFormatter = DateTimeFormatter.ofPattern(outputPattern);
 
             } catch (Exception e) {
                 return Optional.of("ERROR: " + e.getMessage());
-            }
+        }
 
-            return Optional.of(localDateTime.format(outputFormatter));
+        return Optional.of(zonedDateTime.format(outputFormatter));
         }
     }
 }
