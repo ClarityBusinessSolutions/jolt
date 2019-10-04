@@ -251,13 +251,18 @@ public class Strings {
 
             String inputPatterns = (String) args.get(0);
             String outputPattern = (String) args.get(1);
-            String timezone = (String) args.get(2);
+
+            String timezone = "";
+
+            if (args.size() == 3) {
+                timezone = (String) args.get(2);
+            }
 
             ZonedDateTime zonedDateTime;
             DateTimeFormatter originalFormatter;
             DateTimeFormatter outputFormatter;
 
-            ZoneId zoneId = ZoneId.systemDefault();
+            ZoneId zoneId = ZoneOffset.UTC;
 
             if (StringTools.isNotBlank(timezone)) {
 
@@ -277,7 +282,7 @@ public class Strings {
                     Long epochTime = Long.parseLong(originalDate);
 
                     //zonedDateTime = LocalDateTime.ofEpochSecond(epochTime, 0, ZoneOffset.UTC);
-                    zonedDateTime = ZonedDateTime.ofInstant(Instant.ofEpochMilli(epochTime), ZoneId.of(timezone));
+                    zonedDateTime = ZonedDateTime.ofInstant(Instant.ofEpochMilli(epochTime), zoneId);
 
 
                 } else if (inputPatterns.equalsIgnoreCase("EPOCH_SECOND")) {
@@ -285,7 +290,7 @@ public class Strings {
                     Long epochTime = Long.parseLong(originalDate);
 
                     //zonedDateTime = LocalDateTime.ofEpochSecond(epochTime, 0, ZoneOffset.UTC);
-                    zonedDateTime = ZonedDateTime.ofInstant(Instant.ofEpochSecond(epochTime), ZoneId.of(timezone));
+                    zonedDateTime = ZonedDateTime.ofInstant(Instant.ofEpochSecond(epochTime), zoneId);
 
 
                 } else {
