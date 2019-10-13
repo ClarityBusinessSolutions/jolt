@@ -246,43 +246,42 @@ public class Strings {
                     args.get(1) instanceof String)) {
                 //TODO should we warn user that we were unable to parse the input or output pattern?
                 return Optional.of(originalDate);
-                //return Optional.of("foo");
             }
 
             String inputPatterns = (String) args.get(0);
             String outputPattern = (String) args.get(1);
 
-            String timezone = "";
+            String originalTimezone = "UTC";
+            String newTimezone = "";
 
             if (args.size() == 3) {
-                timezone = (String) args.get(2);
+                originalTimezone = (String) args.get(2);
+            }
+
+            if (args.size() == 4) {
+                originalTimezone = (String) args.get(2);
+                newTimezone = (String) args.get(3);
             }
 
             ZonedDateTime zonedDateTime;
             DateTimeFormatter originalFormatter;
             DateTimeFormatter outputFormatter;
 
-            ZoneId zoneId = ZoneOffset.UTC;
+            ZoneId originalZoneId = ZoneOffset.UTC;
 
-            if (StringTools.isNotBlank(timezone)) {
+            if (StringTools.isNotBlank(originalTimezone)) {
 
-                String timeZoneString = timeZoneString = ZoneId.SHORT_IDS.get(timezone);
-
-                if (timeZoneString == null) {
-                    throw new SpecException( "Invalid timezone! " +
-                            "Timezone must be abbreviated timezone from ZoneId.SHORT_IDS" );
-                } else if (timeZoneString != null) {
-                    zoneId = ZoneId.of(timeZoneString);
-                }
+                    originalZoneId = ZoneId.of(originalTimezone);
             }
 
             try {
+
                 if (inputPatterns.equalsIgnoreCase("EPOCH_MILLI")) {
 
                     Long epochTime = Long.parseLong(originalDate);
 
                     //zonedDateTime = LocalDateTime.ofEpochSecond(epochTime, 0, ZoneOffset.UTC);
-                    zonedDateTime = ZonedDateTime.ofInstant(Instant.ofEpochMilli(epochTime), zoneId);
+                    zonedDateTime = ZonedDateTime.ofInstant(Instant.ofEpochMilli(epochTime), originalZoneId);
 
 
                 } else if (inputPatterns.equalsIgnoreCase("EPOCH_SECOND")) {
@@ -290,21 +289,32 @@ public class Strings {
                     Long epochTime = Long.parseLong(originalDate);
 
                     //zonedDateTime = LocalDateTime.ofEpochSecond(epochTime, 0, ZoneOffset.UTC);
-                    zonedDateTime = ZonedDateTime.ofInstant(Instant.ofEpochSecond(epochTime), zoneId);
+                    zonedDateTime = ZonedDateTime.ofInstant(Instant.ofEpochSecond(epochTime), originalZoneId);
 
 
                 } else {
-                    originalFormatter = DateTimeFormatter.ofPattern(inputPatterns).withZone(zoneId);
-                    zonedDateTime = ZonedDateTime.parse(originalDate, originalFormatter);
+                    originalFormatter = DateTimeFormatter.ofPattern(inputPatterns);//.withZone(zoneId);
+
+                    LocalDateTime ldt = LocalDateTime.parse(originalDate, originalFormatter);
+                    zonedDateTime = ZonedDateTime.of(ldt, originalZoneId);
+
+                    if (StringTools.isNotBlank(newTimezone)) {
+
+                        ZoneId newZoneId = ZoneId.of(newTimezone);
+                        zonedDateTime = zonedDateTime.withZoneSameInstant(newZoneId);
+                    }
                 }
 
                 outputFormatter = DateTimeFormatter.ofPattern(outputPattern);
 
             } catch (Exception e) {
                 return Optional.of("ERROR: " + e.getMessage());
-        }
+            }
 
-        return Optional.of(zonedDateTime.format(outputFormatter));
+            //System.out.println("Output formatter: "+ outputPattern + " "+outputFormatter);
+            System.out.format("Formatted date time with default zone name is %s\n", zonedDateTime.format(outputFormatter));
+
+            return Optional.of(zonedDateTime.format(outputFormatter));
         }
     }
 }

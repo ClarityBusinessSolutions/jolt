@@ -3,6 +3,7 @@
     "date": "Wednesday 02/20/2019 00:00:00",
     "anotherDate": "02/20/2019,00:00",
     "yetAnotherDate": "02/20/2019,04:00",
+    "convertTimeZoneDate": "02/20/2019,05:00",
     "originalDate": "Wednesday 02/20/2019 00:00:00",
     "unixTime": "1550696128",
     "millisecTime": "1550696128527"
@@ -15,7 +16,9 @@
     "unixTime": "=transformDate(@(1,unixTime), 'EPOCH_SECOND', yyyy-MM-dd'T'HH:mm:ss)",
     //By using the string "EPOCH_MILLI", this tells the system to parse this as seconds since epoch (assuming UTC)
     "millisecTime": "=transformDate(@(1,millisecTime), 'EPOCH_MILLI', yyyy-MM-dd'T'HH:mm:ss.SSS)",
-    "yetAnotherDate": "=transformDate(@(1,yetAnotherDate), '[EEEE MM/dd/yyyy HH:mm:ss][MM/dd/yyyy,HH:mm]', yyyy-MM-dd'T'HH:mm:ss ZZZZ, 'EST')"
+    "yetAnotherDate": "=transformDate(@(1,yetAnotherDate), '[EEEE MM/dd/yyyy HH:mm:ss][MM/dd/yyyy,HH:mm]', yyyy-MM-dd'T'HH:mm:ss zzz, 'America/New_York')",
+    //Convert from one date format to another (from America/New_York to UTC)
+    "convertTimeZoneDate": "=transformDate(@(1,convertTimeZoneDate), '[EEEE MM/dd/yyyy HH:mm:ss][MM/dd/yyyy,HH:mm]', yyyy-MM-dd'T'HH:mm:ss X, 'America/New_York', 'UTC')"
   },
   "context": {},
   "OVERWRITR": {
@@ -24,6 +27,7 @@
     "unixTime": "2019-02-20T20:55:28",
     "originalDate": "Wednesday 02/20/2019 00:00:00",
     "millisecTime": "2019-02-20T20:55:28.527",
-    "yetAnotherDate": "2019-02-20T00:00:00"
+    "yetAnotherDate": "2019-02-20T04:00:00 EST",
+    "convertTimeZoneDate": "2019-02-20T10:00:00 Z"
   }
 }
